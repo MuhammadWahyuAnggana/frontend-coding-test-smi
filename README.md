@@ -1,145 +1,149 @@
-# AS / OPS — Product Operations Dashboard
+# AS / OPS — Dashboard Operasional Produk
 
-Front-End Engineer coding test implementation using React, TypeScript, and the DummyJSON REST API.
+Implementasi coding test Front-End Engineer menggunakan React, TypeScript, dan REST API DummyJSON.
 
-## Overview
+## Ringkasan
 
-AS / OPS is a compact product-operations dashboard designed to make a large product catalogue easier to review. It includes a simulated login, product data from DummyJSON, catalogue filtering, sorting, pagination, summary metrics, and a product detail drawer.
+AS / OPS adalah dashboard operasional produk yang memudahkan peninjauan katalog. Aplikasi menyediakan simulasi login, data produk dari DummyJSON, pencarian dan filter, pengurutan, pagination, ringkasan metrik, serta panel detail produk.
 
-The application was intentionally scoped to satisfy the coding-test requirements while keeping the implementation easy to review and present.
+Ruang lingkup aplikasi disesuaikan dengan persyaratan coding test agar implementasinya mudah ditinjau dan dijelaskan saat presentasi.
 
-## Required Features Implemented
+## Implementasi Persyaratan
 
-- Simple login page using dummy credentials.
-- REST API integration using the native Fetch API.
-- DummyJSON product catalogue integration.
-- Reusable UI components.
-- API/data-processing logic separated from UI components.
-- Loading state.
-- API error state with retry action.
-- Empty-filter-result state.
-- Invalid API record validation before data reaches the UI.
-- Responsive layout.
-- Git-ready project structure.
+- Halaman login sederhana menggunakan akun demo.
+- Integrasi REST API menggunakan Fetch API bawaan browser.
+- Katalog produk dari DummyJSON.
+- Komponen UI yang dapat digunakan kembali.
+- Pemisahan logika API dan pengolahan data dari komponen UI.
+- Indikator saat data sedang dimuat (loading state).
+- Tampilan kegagalan API dengan tombol coba lagi (retry).
+- Tampilan katalog kosong dan hasil filter yang tidak ditemukan.
+- Validasi serta normalisasi data API sebelum digunakan oleh UI.
+- Tata letak responsif.
+- Struktur proyek yang siap dikelola menggunakan Git.
 
-## Additional Features
+## Fitur Tambahan
 
-- Search by product title, description, or brand.
-- Category filter.
-- Stock-state filter.
-- Multiple sort options.
-- Client-side pagination.
-- Product summary metrics.
-- Product detail drawer.
-- Session simulation using `localStorage`.
-- Reduced-motion accessibility support.
+- Pencarian berdasarkan nama, deskripsi, atau merek produk.
+- Filter kategori dan status stok.
+- Beberapa pilihan pengurutan.
+- Pagination di sisi client.
+- Ringkasan total produk, stok menipis, stok habis, dan rata-rata rating.
+- Panel detail produk (drawer).
+- Simulasi sesi menggunakan `localStorage`.
+- Dukungan preferensi pengurangan animasi (`prefers-reduced-motion`).
 
-## Demo Login
+## Akun Demo
 
 ```text
 Email: reviewer@asops.dev
 Password: Frontend2026!
 ```
 
-Authentication is intentionally simulated as allowed by the test instructions. No real credentials or backend authentication are used.
+Autentikasi disimulasikan sesuai ketentuan soal. Aplikasi tidak menggunakan kredensial asli atau layanan autentikasi backend.
 
-## Tech Stack
+## Teknologi dan Tools
 
 - React 18
 - TypeScript
 - Vite
 - CSS
-- Native Fetch API
-- DummyJSON REST API
+- Fetch API bawaan browser
+- REST API DummyJSON
 
-No external UI component or state-management library is used. This keeps the dependency surface small and makes the implementation easier to review.
+Aplikasi tidak menggunakan library komponen UI atau pengelolaan state tambahan. Pendekatan ini menjaga jumlah dependency tetap sedikit dan memudahkan peninjauan implementasi.
 
-## API
+## API dan Penanganan Data
 
-Primary API source:
+Endpoint yang digunakan:
 
 - `GET https://dummyjson.com/products?limit=0`
 - `GET https://dummyjson.com/products/categories`
 
-The application validates the shape of API records before exposing them to the UI.
+Aplikasi memvalidasi struktur data API sebelum menggunakannya pada UI.
 
-Required text fields must be strings and required numeric fields must be finite numbers. Optional brand, SKU, and availability text are trimmed when valid and omitted when missing or malformed. Optional discount metadata is retained only when it is a finite number. A usable product is not rejected just because optional metadata is unavailable.
+Field teks wajib harus berupa string, sedangkan field angka wajib harus berupa angka terbatas (bukan `NaN` atau `Infinity`). Field opsional seperti merek, SKU, dan status ketersediaan dibersihkan dari spasi di awal/akhir jika valid. Jika tidak tersedia atau salah tipe, field tersebut diperlakukan sebagai tidak tersedia. Nilai diskon opsional hanya dipertahankan jika berupa angka terbatas. Produk yang masih dapat digunakan tidak dibuang hanya karena metadata opsionalnya bermasalah.
 
-An empty `products` array is a successful empty catalogue with a retry action. A non-empty array containing no usable records, a malformed payload, or malformed JSON produces an explicit data error. HTTP and network failures remain request errors. Metrics show an em dash while loading or after an error; a successfully empty catalogue shows zero counts and no average rating.
+Penanganan kondisi data dibedakan sebagai berikut:
 
-## Project Structure
+- Array `products` kosong merupakan respons yang berhasil. Aplikasi menampilkan katalog kosong dengan tombol coba lagi.
+- Array berisi data tetapi tidak memiliki satu pun produk yang dapat digunakan menghasilkan pesan error data. Struktur respons yang salah atau JSON rusak juga menghasilkan pesan error data.
+- Kegagalan HTTP atau jaringan ditampilkan sebagai kegagalan request, dengan tombol coba lagi.
+- Selama loading atau setelah error, metrik menampilkan tanda `—`. Jika katalog berhasil dimuat tetapi kosong, jumlah produk dan stok bernilai nol, sedangkan rata-rata rating tidak ditampilkan sebagai angka.
+
+## Struktur Proyek
 
 ```text
 src/
-├── components/       # Reusable presentation components
-├── hooks/            # Async data-loading state
-├── services/         # REST API integration + response validation
-├── types/            # Shared TypeScript types
-├── utils/            # Filtering, sorting, pagination, metrics
+├── components/       # Komponen tampilan yang dapat digunakan kembali
+├── hooks/            # Pengelolaan state pemuatan data asinkron
+├── services/         # Integrasi REST API dan validasi respons
+├── types/            # Definisi tipe TypeScript bersama
+├── utils/            # Filter, pengurutan, pagination, dan metrik
 ├── App.tsx
 ├── main.tsx
 └── styles.css
 ```
 
-## Run Locally
+## Menjalankan Secara Lokal
 
-Requirements:
+Prasyarat:
 
-- Node.js 18+ (Node.js 20 LTS recommended)
+- Node.js 18 atau lebih baru
 - npm
 
-Install dependencies:
+Instal dependency:
 
 ```bash
 npm install
 ```
 
-Start development server:
+Jalankan server pengembangan:
 
 ```bash
 npm run dev
 ```
 
-Build production bundle:
+Periksa TypeScript dan buat build produksi:
 
 ```bash
 npm run build
 ```
 
-Preview production build:
+Jalankan pratinjau hasil build produksi:
 
 ```bash
 npm run preview
 ```
 
-Run regression tests:
+Jalankan tes regresi:
 
 ```bash
 npm test
 ```
 
-Tests use Node's built-in test runner and the existing TypeScript compiler to load source modules in memory; no additional test dependency is installed. Coverage includes optional-field normalization, invalid/mixed/empty responses, request failures, rendering normalized records, search, filters, sorting, and pagination. These tests do not replace browser interaction checks.
+Tes menggunakan test runner bawaan Node.js dan compiler TypeScript yang sudah tersedia untuk memuat modul source di memori. Tidak ada dependency pengujian tambahan. Pengujian mencakup normalisasi field opsional, respons invalid/campuran/kosong, kegagalan request, rendering data yang telah dinormalisasi, pencarian, filter, pengurutan, dan pagination. Tes ini tidak menggantikan pemeriksaan interaksi langsung melalui browser.
 
-## Design Notes
+## Catatan Desain
 
-The interface uses a restrained product-operations visual language: off-white surfaces, graphite typography, navy/cobalt accents, compact spacing, and subtle interaction feedback. The design intentionally avoids heavy UI frameworks and decorative effects so the data remains the focus.
+Antarmuka menggunakan tampilan operasional yang sederhana: latar putih gading, teks abu-abu gelap, aksen navy/cobalt, jarak antarelemen yang ringkas, dan umpan balik interaksi yang halus. Framework UI besar dan efek dekoratif berlebihan dihindari agar data tetap menjadi fokus.
 
-`AS / OPS` is a neutral demo identity derived from **Anggana Systems / Operations**. It is used only as a visual product name for this assessment and does not represent a real company.
+`AS / OPS` adalah identitas demo yang berasal dari **Anggana Systems / Operations**. Nama ini hanya digunakan sebagai identitas visual untuk coding test dan tidak mewakili perusahaan nyata.
 
-## Technical Decisions
+## Keputusan Teknis
 
-### Why client-side filtering?
+### Pengolahan katalog di sisi client
 
-DummyJSON supports server-side search, pagination, and category endpoints. For this assessment the catalogue is loaded once (`limit=0`) and filtering/sorting/pagination are performed in pure utility functions. This makes the data-processing logic easy to inspect during presentation and keeps UI components focused on rendering.
+DummyJSON mendukung pencarian, pagination, dan endpoint kategori di sisi server. Pada aplikasi ini, katalog dimuat melalui `limit=0`, lalu filter, pengurutan, dan pagination dijalankan melalui fungsi utilitas murni. Dengan begitu, logika pengolahan data mudah diperiksa saat presentasi dan komponen UI tetap berfokus pada tampilan.
 
-### Why no authentication library?
+### Simulasi login tanpa library autentikasi
 
-The instructions explicitly allow simple validation or dummy data to simulate login. A local dummy session is therefore sufficient and avoids unnecessary backend/authentication scope.
+Soal memperbolehkan validasi sederhana atau data dummy untuk simulasi login. Karena itu, sesi demo lokal sudah mencukupi tanpa menambah layanan backend atau autentikasi yang tidak diperlukan.
 
-### Why no additional UI library?
+### Tanpa library UI tambahan
 
-The application uses only React and TypeScript. Avoiding a component framework keeps the bundle small and makes the implementation choices visible to reviewers.
+UI dibangun menggunakan React, TypeScript, dan CSS biasa. Tanpa framework komponen tambahan, ukuran bundle tetap kecil dan keputusan implementasi lebih mudah ditinjau.
 
-## Notes for Reviewers
+## Catatan untuk Reviewer
 
-DummyJSON is a public testing API. If the remote service is unavailable, the application intentionally shows an error state and provides a retry action rather than silently hiding the failure.
+DummyJSON merupakan API publik untuk pengujian. Jika layanan tidak tersedia, aplikasi menampilkan kondisi error dan menyediakan tombol coba lagi agar kegagalan tetap terlihat serta dapat ditangani oleh pengguna.
