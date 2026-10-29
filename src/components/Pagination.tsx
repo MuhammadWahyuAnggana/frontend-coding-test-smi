@@ -10,7 +10,7 @@ export function Pagination({ page, totalPages, onPageChange }: Props) {
   return (
     <nav className="pagination" aria-label="Product pages">
       <button type="button" disabled={page === 1} onClick={() => onPageChange(page - 1)}>← Previous</button>
-      <span>Page {page} / {totalPages}</span>
+      <span role="status" aria-atomic="true">Page {page} / {totalPages}</span>
       <button type="button" disabled={page === totalPages} onClick={() => onPageChange(page + 1)}>Next →</button>
     </nav>
   )

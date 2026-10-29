@@ -63,6 +63,10 @@ Primary API source:
 
 The application validates the shape of API records before exposing them to the UI.
 
+Required text fields must be strings and required numeric fields must be finite numbers. Optional brand, SKU, and availability text are trimmed when valid and omitted when missing or malformed. Optional discount metadata is retained only when it is a finite number. A usable product is not rejected just because optional metadata is unavailable.
+
+An empty `products` array is a successful empty catalogue with a retry action. A non-empty array containing no usable records, a malformed payload, or malformed JSON produces an explicit data error. HTTP and network failures remain request errors. Metrics show an em dash while loading or after an error; a successfully empty catalogue shows zero counts and no average rating.
+
 ## Project Structure
 
 ```text
@@ -107,6 +111,14 @@ Preview production build:
 ```bash
 npm run preview
 ```
+
+Run regression tests:
+
+```bash
+npm test
+```
+
+Tests use Node's built-in test runner and the existing TypeScript compiler to load source modules in memory; no additional test dependency is installed. Coverage includes optional-field normalization, invalid/mixed/empty responses, request failures, rendering normalized records, search, filters, sorting, and pagination. These tests do not replace browser interaction checks.
 
 ## Design Notes
 

@@ -26,7 +26,7 @@ export function ProductCard({ product, onOpen }: Props) {
         <p>{product.brand || 'Independent brand'}</p>
         <div className="product-bottom-line">
           <strong>{formatCurrency(product.price)}</strong>
-          <button type="button" onClick={() => onOpen(product)}>Details ↗</button>
+          <button type="button" onClick={() => onOpen(product)} aria-label={`Details for ${product.title}`}>Details ↗</button>
         </div>
       </div>
     </article>

@@ -5,7 +5,7 @@ import { MetricCard } from './components/MetricCard'
 import { Pagination } from './components/Pagination'
 import { ProductCard } from './components/ProductCard'
 import { ProductDrawer } from './components/ProductDrawer'
-import { EmptyState, ErrorState, LoadingState } from './components/StateViews'
+import { CatalogueEmptyState, EmptyState, ErrorState, LoadingState } from './components/StateViews'
 import { useProducts } from './hooks/useProducts'
 import type { Product, SortOption, StockFilter } from './types/product'
 import { PAGE_SIZE, filterProducts, getProductMetrics, paginateProducts, sortProducts } from './utils/products'
@@ -26,6 +26,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
   const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PAGE_SIZE))
   const visibleProducts = useMemo(() => paginateProducts(filteredProducts, page), [filteredProducts, page])
   const metrics = useMemo(() => getProductMetrics(products), [products])
+  const metricsUnavailable = loading || Boolean(error)
 
   useEffect(() => {
     setPage(1)
@@ -71,16 +72,16 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
         </section>
 
         <section className="metric-grid" aria-label="Product summary">
-          <MetricCard label="TOTAL PRODUCTS" value={loading ? '—' : String(metrics.total)} note="Validated API records" accent />
-          <MetricCard label="LOW STOCK" value={loading ? '—' : String(metrics.lowStock)} note="10 units or fewer" />
-          <MetricCard label="OUT OF STOCK" value={loading ? '—' : String(metrics.outOfStock)} note="Requires attention" />
-          <MetricCard label="AVG. RATING" value={loading ? '—' : metrics.averageRating.toFixed(2)} note="Across all products" />
+          <MetricCard label="TOTAL PRODUCTS" value={metricsUnavailable ? '—' : String(metrics.total)} note="Validated API records" accent />
+          <MetricCard label="LOW STOCK" value={metricsUnavailable ? '—' : String(metrics.lowStock)} note="10 units or fewer" />
+          <MetricCard label="OUT OF STOCK" value={metricsUnavailable ? '—' : String(metrics.outOfStock)} note="Requires attention" />
+          <MetricCard label="AVG. RATING" value={metricsUnavailable || metrics.total === 0 ? '—' : metrics.averageRating.toFixed(2)} note="Across all products" />
         </section>
 
         <section className="catalogue-section">
           <div className="section-heading">
             <div><span>02</span><h2>Catalogue</h2></div>
-            <p>{filteredProducts.length} matching {filteredProducts.length === 1 ? 'record' : 'records'}</p>
+            <p role="status" aria-atomic="true">{loading || error ? '—' : filteredProducts.length} matching {filteredProducts.length === 1 ? 'record' : 'records'}</p>
           </div>
 
           <FilterBar
@@ -98,7 +99,8 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
 
           {loading && <LoadingState />}
           {!loading && error && <ErrorState message={error} onRetry={retry} />}
-          {!loading && !error && filteredProducts.length === 0 && <EmptyState onReset={resetFilters} />}
+          {!loading && !error && products.length === 0 && <CatalogueEmptyState onRetry={retry} />}
+          {!loading && !error && products.length > 0 && filteredProducts.length === 0 && <EmptyState onReset={resetFilters} />}
           {!loading && !error && filteredProducts.length > 0 && (
             <>
               <div className="product-grid">
